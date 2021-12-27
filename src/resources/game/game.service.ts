@@ -11,7 +11,6 @@ import * as TimeConstants from 'time-constants';
 export class GameService {
   constructor(
     @InjectRepository(Game)
-    @InjectRepository(Publisher)
     private gameRepository: Repository<Game>,
   ) {}
 
