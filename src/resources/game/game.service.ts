@@ -72,7 +72,7 @@ export class GameService {
         .update()
         .where({ releaseDate: Between(now12monthAgo, now18monthAgo) })
         .set({
-          price: () => 'price * 0.8',
+          discount: 0.2,
         })
         .execute(),
     ]);
