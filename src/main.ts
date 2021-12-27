@@ -12,8 +12,12 @@ export async function bootstrap() {
     ...nestjsConfigResolved.options,
     logger: new ConsoleLogger(),
   });
-  app.use(helmet(nestjsConfigResolved.helmet));
-  app.use(morgan(nestjsConfigResolved.morgan));
+  if (nestjsConfigResolved.helmet != null) {
+    app.use(helmet(nestjsConfigResolved.helmet));
+  }
+  if (nestjsConfigResolved.morgan != null) {
+    app.use(morgan(nestjsConfigResolved.morgan));
+  }
   await app.listen(nestjsConfigResolved.port);
 }
 
