@@ -12,6 +12,7 @@ export async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     ...nestjsConfigResolved.options,
     logger: new ConsoleLogger(),
+    bufferLogs: true,
   });
   if (nestjsConfigResolved.compression != null) {
     app.use(compression(nestjsConfigResolved.compression));
@@ -20,7 +21,7 @@ export async function bootstrap() {
     app.use(helmet(nestjsConfigResolved.helmet));
   }
   if (nestjsConfigResolved.morgan != null) {
-    app.use(morgan(nestjsConfigResolved.morgan));
+    app.use(morgan(...nestjsConfigResolved.morgan));
   }
   await app.listen(nestjsConfigResolved.port);
 }

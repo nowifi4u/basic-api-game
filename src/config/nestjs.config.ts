@@ -19,7 +19,10 @@ export const nestjsConfig = () => ({
     argumentName: 'HELMET_OPTIONS',
     defValue: undefined,
   }),
-  morgan: process.env.MORGAN_OPTIONS,
+  morgan: <[string?]>parseJSON(process.env.MORGAN_OPTIONS, {
+    argumentName: 'MORGAN_OPTIONS',
+    defValue: [],
+  }),
 });
 
 export default registerAs('nestjs', nestjsConfig);
