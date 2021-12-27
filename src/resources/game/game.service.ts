@@ -15,43 +15,62 @@ export class GameService {
     private gameRepository: Repository<Game>,
   ) {}
 
-  async create(createGameDto: CreateGameDto) {
+  async create(createGameDto: CreateGameDto): Promise<{ id: number }> {
     const result = await this.gameRepository
       .insert(createGameDto)
       .catch(QueryFailedErrorDuplicateCatcher);
-    return result === false ? false : result.generatedMaps?.[0];
+    return {
+      id: result.identifiers?.[0]?.id,
+    };
   }
 
-  findAll(): Promise<Game[]> {
-    return this.gameRepository.find({ relations: ['publisher'] });
+  async findAll(): Promise<{ data: Game[] }> {
+    return {
+      data: await this.gameRepository.find({ relations: ['publisher'] }),
+    };
   }
 
-  findOne(id: number): Promise<Game> {
-    return this.gameRepository.findOne(id, { relations: ['publisher'] });
+  async findOne(id: number): Promise<{ data: Game | undefined }> {
+    return {
+      data: await this.gameRepository.findOne(id, { relations: ['publisher'] }),
+    };
   }
 
-  findByIds(ids: number[]): Promise<Game[]> {
-    return this.gameRepository.findByIds(ids, { relations: ['publisher'] });
+  async findByIds(ids: number[]): Promise<{ data: Game[] }> {
+    return {
+      data: await this.gameRepository.findByIds(ids, {
+        relations: ['publisher'],
+      }),
+    };
   }
 
-  async findOnePublisher(id: number): Promise<Publisher> {
+  async findOnePublisher(id: number): Promise<{ data: Publisher | undefined }> {
     const game = await this.gameRepository.findOne(id, {
       relations: ['publisher'],
     });
-    return game?.publisher;
+    return {
+      data: game?.publisher,
+    };
   }
 
-  async update(id: number, updateGameDto: UpdateGameDto): Promise<boolean> {
+  async update(
+    id: number,
+    updateGameDto: UpdateGameDto,
+  ): Promise<{ ok: boolean }> {
     const result = await this.gameRepository.update(id, updateGameDto);
-    return Boolean(result.affected);
+    return {
+      ok: Boolean(result.affected),
+    };
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: number): Promise<{ ok: boolean }> {
     const result = await this.gameRepository.delete(id);
-    return Boolean(result.affected);
+    return {
+      ok: Boolean(result.affected),
+    };
   }
 
-  async task_purge_and_discount(): Promise<boolean> {
+  async task_purge_and_discount(): Promise<{ affected: number }> {
     const now = new Date();
     const now12monthAgo = new Date(
       now.getTime() - 12 * TimeConstants.AVERAGE_MONTH,
@@ -60,7 +79,7 @@ export class GameService {
       now.getTime() - 18 * TimeConstants.AVERAGE_MONTH,
     );
 
-    await Promise.all([
+    const results = await Promise.all([
       this.gameRepository
         .createQueryBuilder('purger18')
         .delete()
@@ -76,6 +95,8 @@ export class GameService {
         })
         .execute(),
     ]);
-    return true;
+    return {
+      affected: results.reduce((sum, cur) => sum + cur.affected, 0),
+    };
   }
 }

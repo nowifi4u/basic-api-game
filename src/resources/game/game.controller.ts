@@ -10,12 +10,15 @@ import {
   ValidationPipe,
   Put,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
+import { ResultTransformInterceptor } from 'src/util/interceptors/ResultInterceptor.interceptor';
 
 @Controller('game')
+@UseInterceptors(new ResultTransformInterceptor())
 export class GameController {
   constructor(private readonly gameService: GameService) {}
 

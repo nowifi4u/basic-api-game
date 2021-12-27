@@ -1,3 +1,4 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 
 export class RequiredParameterError extends Error {
@@ -16,12 +17,18 @@ export class ValueTypeError extends Error {
   }
 }
 
-export function QueryFailedErrorDuplicateCatcher(err: any): never | false {
+export function QueryFailedErrorDuplicateCatcher(err: any): never {
   console.log('ERROR', err.message);
   console.log('ERROR', err.parameters);
   if (err instanceof QueryFailedError) {
     if (err.message.startsWith('Duplicate entry')) {
-      return false;
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Duplicate entry',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
   throw err;

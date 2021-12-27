@@ -8,12 +8,15 @@ import {
   ParseIntPipe,
   ValidationPipe,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PublisherService } from './publisher.service';
 import { CreatePublisherDto } from './dto/create-publisher.dto';
 import { UpdatePublisherDto } from './dto/update-publisher.dto';
+import { ResultTransformInterceptor } from 'src/util/interceptors/ResultInterceptor.interceptor';
 
 @Controller('publisher')
+@UseInterceptors(new ResultTransformInterceptor())
 export class PublisherController {
   constructor(private readonly publisherService: PublisherService) {}
 

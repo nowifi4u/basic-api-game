@@ -13,34 +13,46 @@ export class PublisherService {
     private publisherRepository: Repository<Publisher>,
   ) {}
 
-  async create(createPublisherDto: CreatePublisherDto) {
+  async create(
+    createPublisherDto: CreatePublisherDto,
+  ): Promise<{ id: number }> {
     const result = await this.publisherRepository
       .insert(createPublisherDto)
       .catch(QueryFailedErrorDuplicateCatcher);
-    return result === false ? false : result.generatedMaps?.[0];
+    return {
+      id: result.identifiers?.[0]?.id,
+    };
   }
 
-  findAll(): Promise<Publisher[]> {
-    return this.publisherRepository.find();
+  async findAll(): Promise<{ data: Publisher[] }> {
+    return {
+      data: await this.publisherRepository.find(),
+    };
   }
 
-  findOne(id: number): Promise<Publisher> {
-    return this.publisherRepository.findOne(id);
+  async findOne(id: number): Promise<{ data: Publisher | undefined }> {
+    return {
+      data: await this.publisherRepository.findOne(id),
+    };
   }
 
   async update(
     id: number,
     updatePublisherDto: UpdatePublisherDto,
-  ): Promise<boolean> {
+  ): Promise<{ ok: boolean }> {
     const result = await this.publisherRepository.update(
       id,
       updatePublisherDto,
     );
-    return Boolean(result.affected);
+    return {
+      ok: Boolean(result.affected),
+    };
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: number): Promise<{ ok: boolean }> {
     const result = await this.publisherRepository.delete(id);
-    return Boolean(result.affected);
+    return {
+      ok: Boolean(result.affected),
+    };
   }
 }
