@@ -2,6 +2,7 @@ import { ConsoleLogger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { nestjsConfig } from './config/nestjs.config';
+import * as compression from 'compression';
 import * as helmet from 'helmet';
 import * as morgan from 'morgan';
 
@@ -12,6 +13,9 @@ export async function bootstrap() {
     ...nestjsConfigResolved.options,
     logger: new ConsoleLogger(),
   });
+  if (nestjsConfigResolved.compression != null) {
+    app.use(compression(nestjsConfigResolved.compression));
+  }
   if (nestjsConfigResolved.helmet != null) {
     app.use(helmet(nestjsConfigResolved.helmet));
   }

@@ -11,6 +11,10 @@ export const nestjsConfig = () => ({
     argumentName: 'NEST_OPTIONS',
     defValue: undefined,
   }),
+  compression: parseJSON(process.env.COMPRESSION_OPTIONS, {
+    argumentName: 'COMPRESSION_OPTIONS',
+    defValue: undefined,
+  }),
   helmet: parseJSON(process.env.HELMET_OPTIONS, {
     argumentName: 'HELMET_OPTIONS',
     defValue: undefined,
