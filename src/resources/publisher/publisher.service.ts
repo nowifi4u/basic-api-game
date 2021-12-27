@@ -40,7 +40,7 @@ export class PublisherService {
   }
 
   async remove(id: number): Promise<boolean> {
-    const result = await this.publisherRepository.delete({ id });
+    const result = await this.publisherRepository.delete(id);
     return Boolean(result.affected);
   }
 }
