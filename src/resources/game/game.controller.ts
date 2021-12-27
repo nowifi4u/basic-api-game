@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   ValidationPipe,
   Put,
+  Post,
 } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
@@ -18,7 +19,7 @@ import { UpdateGameDto } from './dto/update-game.dto';
 export class GameController {
   constructor(private readonly gameService: GameService) {}
 
-  @Delete('task_purge_and_discount')
+  @Post('task_purge_and_discount')
   task_purge_and_discount() {
     return this.gameService.task_purge_and_discount();
   }
