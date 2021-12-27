@@ -59,13 +59,15 @@ export class GameService {
     const now18monthAgo = new Date(
       now.getTime() - 18 * TimeConstants.AVERAGE_MONTH,
     );
+
     await Promise.all([
-      await this.gameRepository
+      this.gameRepository
         .createQueryBuilder('purger18')
         .delete()
         .where({ releaseDate: LessThan(now18monthAgo) })
         .execute(),
-      await this.gameRepository
+
+      this.gameRepository
         .createQueryBuilder('discount12')
         .update()
         .where({ releaseDate: Between(now12monthAgo, now18monthAgo) })
