@@ -21,7 +21,7 @@ export class GameService {
   }
 
   findAll(): Promise<Game[]> {
-    return this.gameRepository.find();
+    return this.gameRepository.find({ relations: ['publisher'] });
   }
 
   findOne(id: number): Promise<Game> {
