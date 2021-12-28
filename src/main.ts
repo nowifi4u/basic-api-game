@@ -2,14 +2,19 @@ import { ConsoleLogger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { nestjsConfig } from './config/nestjs.config';
+import * as express from 'express';
+import * as http from 'http';
+import * as https from 'https';
 import * as compression from 'compression';
 import * as helmet from 'helmet';
 import * as morgan from 'morgan';
+import { ExpressAdapter } from '@nestjs/platform-express';
 
 const nestjsConfigResolved = nestjsConfig();
 
 export async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const server = express();
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
     ...nestjsConfigResolved.options,
     logger: new ConsoleLogger(),
     bufferLogs: true,
@@ -23,7 +28,18 @@ export async function bootstrap() {
   if (nestjsConfigResolved.morgan != null) {
     app.use(morgan(...nestjsConfigResolved.morgan));
   }
-  await app.listen(nestjsConfigResolved.port);
+  await app.init();
+
+  if (nestjsConfigResolved.httpPort) {
+    http
+      .createServer(nestjsConfigResolved.httpOptions, server)
+      .listen(nestjsConfigResolved.httpPort);
+  }
+  if (nestjsConfigResolved.httpsPort) {
+    https
+      .createServer(nestjsConfigResolved.httpsOptions, server)
+      .listen(nestjsConfigResolved.httpsPort);
+  }
 }
 
 bootstrap();
