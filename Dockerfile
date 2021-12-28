@@ -1,4 +1,5 @@
 FROM node:16-alpine3.12 AS development
+EXPOSE 8080
 
 WORKDIR /usr/src/app
 
@@ -10,6 +11,7 @@ COPY . .
 RUN npm run build
 
 FROM node:16-alpine3.12 AS production
+EXPOSE 8080
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
