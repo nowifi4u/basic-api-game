@@ -17,7 +17,6 @@ export async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
     ...nestjsConfigResolved.options,
     logger: new ConsoleLogger(),
-    bufferLogs: true,
   });
   if (nestjsConfigResolved.compression != null) {
     app.use(compression(nestjsConfigResolved.compression));
@@ -42,4 +41,4 @@ export async function bootstrap() {
   }
 }
 
-bootstrap();
+bootstrap().then(() => console.log('READY'));
